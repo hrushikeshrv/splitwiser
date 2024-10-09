@@ -1,0 +1,34 @@
+{% extends 'layout.html' %}
+
+{% block title %}Register | Split{% endblock %}
+
+{% block body %}
+    <div class="full-page flexbox-column ajc">
+
+        <form action="{% url 'users:register' %}" method="POST" class="flexbox-column pad-30 login-form" style="min-width: 300px;">
+            {% csrf_token %}
+            {{ form.username.label_tag }}
+            {{ form.username.errors }}
+            {{ form.username }}
+
+            {{ form.email.label_tag }}
+            {{ form.email.errors }}
+            {{ form.email }}
+
+            {{ form.password1.label_tag }}
+            {{ form.password1.errors }}
+            {{ form.password1 }}
+
+            {{ form.password2.label_tag }}
+            {{ form.password2.errors }}
+            {{ form.password2 }}
+
+            <button type="submit" class="cta-button mt-20">Create Account</button>
+        </form>
+
+        <div class="mt-30 center flexbox-column ajc">
+            <span class="mb-5">Already have an account?</span>
+            <a href="{% url 'users:login' %}" class="a">Log In</a>
+        </div>
+    </div>
+{% endblock %}
