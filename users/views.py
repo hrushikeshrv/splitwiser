@@ -9,15 +9,15 @@ from users.models import User
 
 
 class UserCreateView(CreateView):
-    template_name = 'users/register.html'
+    template_name = "users/register.html"
     model = User
     form_class = RegistrationForm
-    success_url = reverse_lazy('users:login')
+    success_url = reverse_lazy("users:login")
 
     def form_valid(self, form):
         form.save()
-        username = self.request.POST['username']
-        password = self.request.POST['password1']
+        username = self.request.POST["username"]
+        password = self.request.POST["password1"]
         user = authenticate(username=username, password=password)
         login(self.request, user)
         return HttpResponseRedirect(self.success_url)
