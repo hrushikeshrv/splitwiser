@@ -3,5 +3,27 @@
 {% block title %}Split | hrus.in{% endblock %}
 
 {% block body %}
+    <h1 class="mbt-10">{{ transaction_group.name }}</h1>
+    <span class="flexbox-row aic jcfs">
+        <code>{{ transaction_group.code }}</code>
+        <span class="space-lr">&bullet;</span>
+        <code>{{ transaction_group.currency }}</code>
+    </span>
 
+    <div class="flexbox-column transaction-group-breakdown pad-10 mt-20 table-container">
+        <table>
+            <tbody>
+                {% for user in transaction_group.users.all %}
+                    <tr class="transaction-group-user-share">
+                        <td>{{ user.username }}</td>
+                        <td style="text-align: right;">
+                            <span class="space-lr">{{ transaction_group.currency }}</span>
+                            <span id="user-{{ user.username }}-share"></span>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+    </div>
 {% endblock %}

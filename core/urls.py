@@ -7,9 +7,19 @@ app_name = "core"
 urlpatterns = [
     path("", views.IndexView.as_view(), name="index"),
     path(
-        "group/<int:pk>",
+        "groups/<int:pk>",
         views.TransactionGroupDetailView.as_view(),
         name="transaction_group_detail",
+    ),
+    path(
+        "groups/",
+        views.TransactionGroupListView.as_view(),
+        name="transaction_group_list",
+    ),
+    path(
+        "groups/join",
+        views.JoinTransactionGroupView.as_view(),
+        name="transaction_group_join",
     ),
     path("__test_view__/", views.test_view, name="test_view"),
 ]

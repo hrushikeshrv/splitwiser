@@ -7,6 +7,8 @@ class TransactionGroup(models.Model):
     name = models.CharField(max_length=48)
     users = models.ManyToManyField(User, related_name="transaction_groups")
     currency = models.CharField(max_length=4, default="$")
+    # The joining code for the group
+    code = models.CharField(max_length=7, unique=True)
 
     def __str__(self):
         return self.name
@@ -14,7 +16,9 @@ class TransactionGroup(models.Model):
 
 class Transaction(models.Model):
     by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
-    group = models.ForeignKey(TransactionGroup, on_delete=models.CASCADE)
+    group = models.ForeignKey(
+        TransactionGroup, on_delete=models.CASCADE, related_name="transactions"
+    )
 
     # The total amount of the transaction. Each user that this transaction was
     # added for could have a different share, which is recorded in the associated

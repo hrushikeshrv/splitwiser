@@ -60,7 +60,7 @@
         </div>
         {% if request.user.is_authenticated %}
         <div class="flexbox-column column-full mbt-30">
-            <a href="" class="flexbox-row aic nav-link">
+            <a href="{% url 'core:transaction_group_list' %}" class="flexbox-row aic nav-link">
                 <span class="space-lr material-symbols-outlined">group</span>
                 <span class="space-lr">My Groups</span>
             </a>
@@ -97,7 +97,7 @@
 
         <div class="flexbox-row mobile-hide">
             {% if request.user.is_authenticated %}
-            <a href="" class="flexbox-row aic nav-link space-lr">
+            <a href="{% url 'core:transaction_group_list' %}" class="flexbox-row aic nav-link space-lr">
                 <span class="space-lr material-symbols-outlined">group</span>
                 <span class="space-lr">My Groups</span>
             </a>
@@ -126,9 +126,11 @@
             <span class="material-symbols-outlined" style="font-size: 2rem;">menu</span>
         </button>
     </nav>
-    {% block body %}
+    <main class="pad-20" style="padding-top: 0;">
+        {% block body %}
 
-    {% endblock %}
+        {% endblock %}
+    </main>
     <script src="{% static 'js/navbar.js' %}"></script>
     <script>
         tippy('[data-tippy-content]', {

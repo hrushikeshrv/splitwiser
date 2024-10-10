@@ -1,0 +1,24 @@
+{% extends 'layout.html' %}
+
+{% block title %}Split | hrus.in{% endblock %}
+
+{% block body %}
+    <h1>Welcome, {{ request.user.username }}</h1>
+    {% for group in transaction_groups %}
+        <div class="column-third pad-10">
+            <a href="{% url 'core:transaction_group_detail' group.pk %}" class="transaction-group-container flexbox-column pad-20">
+                <h2 class="mbt-10">{{ group.name }}</h2>
+                <span class="flexbox-row aic jcfs">
+                    <code>{{ group.code }}</code>
+                    <span class="space-lr">&bullet;</span>
+                    <code>{{ group.currency }}</code>
+                </span>
+            </a>
+        </div>
+    {% empty %}
+        <div class="column-full flexbox-column ajc" style="min-height: 65svh">
+            <strong>You are not in any groups yet</strong>
+            <a class="a" href="{% url 'core:transaction_group_join' %}">Join a group</a>
+        </div>
+    {% endfor %}
+{% endblock %}
