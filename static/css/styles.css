@@ -659,6 +659,11 @@ h1, h2, h3 {
     text-transform: lowercase;
 }
 
+main {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
 .decorative-heading {
     font-family: var(--decorative-font);
     text-transform: lowercase;
@@ -790,6 +795,8 @@ button#change-theme-button {
 */
 nav {
     position: relative;
+    max-width: 1200px;
+    margin: 0 auto;
 }
 
 #mobile-nav-menu {

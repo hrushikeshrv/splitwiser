@@ -10,20 +10,26 @@
         <code>{{ transaction_group.currency }}</code>
     </span>
 
-    <div class="flexbox-column transaction-group-breakdown pad-10 mt-20 table-container">
-        <table>
-            <tbody>
-                {% for user in transaction_group.users.all %}
-                    <tr class="transaction-group-user-share">
-                        <td>{{ user.username }}</td>
-                        <td style="text-align: right;">
-                            <span class="space-lr">{{ transaction_group.currency }}</span>
-                            <span id="user-{{ user.username }}-share"></span>
-                        </td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+    <div class="column-twothird center">
+        <div class="transaction-group-breakdown pad-10 mt-20 table-container">
+            <table>
+                <tbody>
+                    {% for user in transaction_group.users.all %}
+                        <tr class="transaction-group-user-share">
+                            <td>{{ user.username }}</td>
+                            <td style="text-align: right; padding-right: 10px;">
+                                <span>{{ transaction_group.currency }}</span>
+                                <span id="user-{{ user.username }}-share">0</span>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+
+    <div class="flexbox-column column-twothird center transactions-list pad-10 mt-20">
 
     </div>
 {% endblock %}
