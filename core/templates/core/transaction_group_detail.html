@@ -14,31 +14,36 @@
             <strong style="font-size: 1.2rem;">Add a Transaction</strong>
             <form action="{% url 'core:transaction_create' transaction_group.pk %}" method="POST" id="add-transaction-form" class="flexbox-column">
                 {% csrf_token %}
-                <label for="id_name">Transaction Name (optional):</label>
-                <input type="text" name="name" id="id_name" placeholder="Transaction Name" autocomplete="false">
+                <label for="id_transaction_name">Transaction Name (optional):</label>
+                <input type="text" name="name" id="id_transaction_name" placeholder="Transaction Name" autocomplete="false">
 
-                <label for="id_amount">Amount ({{ transaction_group.currency }}):</label>
-                <input type="number" name="amount" id="id_amount" required>
+                <label for="id_transaction_amount">Amount ({{ transaction_group.currency }}):</label>
+                <input type="number" name="amount" id="id_transaction_amount" required>
 
-                <label for="id_date">Date:</label>
-                <input type="datetime-local" name="date" id="id_date" required>
+                <label for="id_transaction_date">Date:</label>
+                <input type="datetime-local" name="date" id="id_transaction_date" required>
 
-                <label for="id_by">By:</label>
-                <select name="by" id="id_by" required>
+                <label for="id_transaction_by">By:</label>
+                <select name="by" id="id_transaction_by" required>
                     {% for user in transaction_group.users.all %}
                         <option value="{{ user.username }}" {% if request.user.username == user.username %}selected{% endif %}>{{ user.username }}</option>
                     {% endfor %}
                 </select>
 
-                <label for="id_for">For:</label>
-                {% for user in transaction_group.users.all %}
-                    <div class="flexbox-row aic transaction-for-option">
-                        <input type="checkbox" name="for" id="id_for_{{ user.username }}" checked>
-                        <label for="id_for_{{ user.username }}" style="margin-top: 0; margin-left: 4px;">{{ user.username }}</label>
-                    </div>
-                {% endfor %}
+                <label for="id_transaction_for">For:</label>
+{#                {% for user in transaction_group.users.all %}#}
+{#                    <div class="flexbox-row aic transaction-for-option">#}
+{#                        <input type="checkbox" name="for" id="id_transaction_for_{{ user.username }}" checked>#}
+{#                        <label for="id_transaction_for_{{ user.username }}" style="margin-top: 0; margin-left: 4px;">{{ user.username }}</label>#}
+{#                    </div>#}
+{#                {% endfor %}#}
+                <select name="for" id="id_transaction_for" multiple>
+                    {% for user in transaction_group.users.all %}
+                        <option value="{{ user.username }}" selected>{{ user.username }}</option>
+                    {% endfor %}
+                </select>
 
-                <button class="flexbox-row ajc cta-button mt-20" id="create-transaction-button" type="button">
+                <button class="flexbox-row ajc cta-button mt-20" id="create-transaction-button">
                     <span class="material-symbols-outlined">payments</span>
                     <span>Add Transaction</span>
                 </button>
@@ -118,4 +123,9 @@
 
 {% block javascript %}
     <script src="{% static 'js/transaction_group_detail.js' %}"></script>
+    <script>
+        const transactionDateInput = document.querySelector('#id_transaction_date');
+        const now = new Date();
+        transactionDateInput.value = now.toISOString().slice(0, 16);
+    </script>
 {% endblock %}

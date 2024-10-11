@@ -1,10 +1,13 @@
+from datetime import datetime
+
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, reverse
+from django.utils.timezone import now
 from django.views.generic import View, DetailView, ListView
 
 from users.models import User
-from core.models import TransactionGroup
+from core.models import TransactionGroup, Transaction, TransactionShare
 
 
 class IndexView(View):
@@ -64,7 +67,31 @@ class TransactionCreateView(UserPassesTestMixin, View):
         return self.request.user.in_group(pk=int(self.kwargs["pk"]))
 
     def post(self, request, pk):
-        pass
+        transaction_name = request.POST.get('name')
+        if not transaction_name:
+            transaction_name = 'Shared Transaction'
+        transaction_amount = int(request.POST.get('amount', 0)) * 100
+
+        transaction = Transaction.objects.create(
+            title=transaction_name,
+            date=datetime.strptime(request.POST['date'], '%Y-%m-%dT%H:%M'),
+            by=User.objects.get(username=request.POST.get('by')),
+            group=TransactionGroup.objects.get(pk=pk),
+            amount=transaction_amount,
+        )
+        shared_usernames = request.POST.getlist('for', [])
+        amount_owed = transaction_amount / len(shared_usernames)
+        for username in shared_usernames:
+            amount_paid = 0
+            if username == request.POST.get('by', ''):
+                amount_paid = transaction_amount
+            TransactionShare.objects.create(
+                user=User.objects.get(username=username),
+                transaction=transaction,
+                amount_paid=amount_paid,
+                amount_owed=amount_owed,
+            )
+        return HttpResponseRedirect(reverse('core:transaction_group_detail', kwargs={"pk": pk}))
 
 
 class JoinTransactionGroupView(View):

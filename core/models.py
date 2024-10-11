@@ -19,7 +19,7 @@ class Transaction(models.Model):
     class Meta:
         ordering = ("-date",)
 
-    title = models.CharField(max_length=64, default='Shared Transaction')
+    title = models.CharField(max_length=64, default="Shared Transaction")
     date = models.DateTimeField(default=now)
     by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     group = models.ForeignKey(
@@ -60,8 +60,8 @@ class TransactionShare(models.Model):
 
     def __str__(self):
         if self.user:
-            return f'{self.user.username} paid {self.amount_paid} for {self.transaction.title} and owed {self.amount_owed}'
-        return f'[deleted user] paid {self.amount_paid} for {self.transaction.title} and owed {self.amount_owed}'
+            return f"{self.user.username} paid {self.amount_paid} for {self.transaction.title} and owed {self.amount_owed}"
+        return f"[deleted user] paid {self.amount_paid} for {self.transaction.title} and owed {self.amount_owed}"
 
     def get_amount_paid(self) -> str:
         """
