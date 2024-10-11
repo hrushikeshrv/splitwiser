@@ -206,11 +206,11 @@ button.cta-button .material-symbols-outlined {
     color: black;
 }
 
-input, button {
+input, button, select {
     font-family: var(--default-font);
 }
 
-input, textarea {
+input, textarea, select {
     border: 2px solid transparent;
     background-color: var(--background-dark-1);
     padding: 10px;
@@ -847,4 +847,17 @@ nav {
 
 .transaction-container:hover {
     background-color: var(--background-dark-1);
+}
+
+.transaction-for-option {
+    padding: 5px 10px;
+}
+
+.transaction-for-option label {
+    font-size: 1.2rem;
+}
+
+.transaction-for-option input {
+    accent-color: var(--primary);
+    transform: scale(1.2);
 }

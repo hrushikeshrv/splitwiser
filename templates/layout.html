@@ -141,6 +141,7 @@
     <script>
         const csrf = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
     </script>
+    <script src="{% static 'js/prompt-utils.js' %}"></script>
     {% block javascript %}{% endblock %}
 </body>
 </html>

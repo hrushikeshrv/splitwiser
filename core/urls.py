@@ -11,6 +11,7 @@ urlpatterns = [
         views.TransactionGroupDetailView.as_view(),
         name="transaction_group_detail",
     ),
+    path('groups/<int:pk>/transactions/create', views.TransactionCreateView.as_view(), name="transaction_create"),
     path(
         "groups/",
         views.TransactionGroupListView.as_view(),

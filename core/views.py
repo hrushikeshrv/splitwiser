@@ -40,9 +40,7 @@ class TransactionGroupDetailView(UserPassesTestMixin, ListView):
     def test_func(self):
         if not self.request.user.is_authenticated:
             return False
-        return self.request.user.transaction_groups.filter(
-            pk=int(self.kwargs["pk"])
-        ).exists()
+        return self.request.user.in_group(pk=int(self.kwargs["pk"]))
 
     def get_queryset(self):
         return (
@@ -57,6 +55,16 @@ class TransactionGroupDetailView(UserPassesTestMixin, ListView):
             pk=self.kwargs["pk"]
         )
         return context
+
+
+class TransactionCreateView(UserPassesTestMixin, View):
+    def test_func(self):
+        if not self.request.user.is_authenticated:
+            return False
+        return self.request.user.in_group(pk=int(self.kwargs["pk"]))
+
+    def post(self, request, pk):
+        pass
 
 
 class JoinTransactionGroupView(View):
