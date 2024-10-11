@@ -2,6 +2,16 @@ from django.contrib import admin
 from core import models
 
 
-admin.site.register(models.TransactionGroup)
-admin.site.register(models.Transaction)
-admin.site.register(models.TransactionShare)
+@admin.register(models.TransactionGroup)
+class TransactionGroupAdmin(admin.ModelAdmin):
+    list_display = ('name', 'code', 'currency')
+
+
+@admin.register(models.Transaction)
+class TransactionAdmin(admin.ModelAdmin):
+    list_display = ('title', 'amount', 'date', 'by', 'group')
+
+
+@admin.register(models.TransactionShare)
+class TransactionShareAdmin(admin.ModelAdmin):
+    list_display = ('transaction', 'user', 'amount_paid', 'amount_owed')

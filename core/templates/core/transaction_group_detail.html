@@ -1,6 +1,12 @@
 {% extends 'layout.html' %}
+{% load static %}
 
 {% block title %}Split | hrus.in{% endblock %}
+
+{% block hidden %}
+    <input type="hidden" name="transaction-group-share-url" id="transaction-group-share-url" value="{% url 'api:transaction_group_summary' transaction_group.pk %}">
+    <input type="hidden" name="transaction-group-currency" id="transaction-group-currency" value="{{ transaction_group.currency }}">
+{% endblock %}
 
 {% block body %}
     <h1 class="mbt-10">{{ transaction_group.name }}</h1>
@@ -8,28 +14,71 @@
         <code>{{ transaction_group.code }}</code>
         <span class="space-lr">&bullet;</span>
         <code>{{ transaction_group.currency }}</code>
+        <span class="space-lr">&bullet;</span>
+        <button style="border-bottom: 2px solid var(--primary); padding: 0; cursor: pointer;">Invite People</button>
     </span>
 
     <div class="column-twothird center">
-        <div class="transaction-group-breakdown pad-10 mt-20 table-container">
+        <div class="transaction-group-breakdown pad-10 mt-20 mb-10 table-container">
             <table>
                 <tbody>
                     {% for user in transaction_group.users.all %}
-                        <tr class="transaction-group-user-share">
+                        <tr class="payment-share-row" data-username="{{ user.username }}" style="cursor: pointer;">
                             <td>{{ user.username }}</td>
                             <td style="text-align: right; padding-right: 10px;">
-                                <span>{{ transaction_group.currency }}</span>
-                                <span id="user-{{ user.username }}-share">0</span>
+                                <strong id="user-{{ user.username }}-share" class="payment-share-cell" data-username="{{ user.username }}">0</strong>
                             </td>
                         </tr>
                     {% endfor %}
                 </tbody>
             </table>
         </div>
+        <div class="flexbox-row ajc" style="background-color: var(--background-color); position: sticky; top: 0;">
+            <button id="add-transaction-button" class="cta-button space-lr flexbox-row ajc" style="padding: 2px; font-size: 0.9rem;">
+                <span class="material-symbols-outlined">payments</span>
+                <span style="margin-right: 7px;">Transaction</span>
+            </button>
+            <button id="add-payment-button" class="space-lr flexbox-row ajc secondary-button">
+                <span class="material-symbols-outlined" style="font-size: 0.95rem;">currency_exchange</span>
+                <span>Internal Payment</span>
+            </button>
+        </div>
     </div>
 
 
     <div class="flexbox-column column-twothird center transactions-list pad-10 mt-20">
+        <span class="flexbox-row aic jcfe mb-10">
+            <span class="flexbox-row ajc" id="payment-record-pages" style="margin-right: 10px;">
+                {% if page_obj.has_previous %}
+                    <a href="{% url 'core:transaction_group_detail' transaction_group %}?page={{ page_obj.previous_page_number }}" class="pagination-page space-lr">
+                        Previous Page
+                    </a>
+                {% endif %}
+                <span class="space-lr">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+                {% if page_obj.has_next %}
+                    <a href="{% url 'core:transaction_group_detail' transaction_group %}?page={{ page_obj.next_page_number }}" class="pagination-page space-lr">
+                        Next Page
+                    </a>
+                {% endif %}
+            </span>
+        </span>
 
+        {% for transaction in page_obj %}
+            <div class="transaction-container flexbox-row aic jcsb pad-10">
+                <div class="flexbox-column">
+                    <strong>{{ transaction.title }}</strong>
+                    {% with transaction.get_share_count as count %}
+                    <span style="font-size: 0.9rem;">By {{ transaction.by.username }} for {{ count }} {{ count|pluralize:"person,people" }}</span>
+                    {% endwith %}
+                </div>
+                <strong style="font-size: 1.5rem;">{{ transaction_group.currency }}{{ transaction.get_amount }}</strong>
+            </div>
+        {% empty %}
+            <strong class="center mt-30">No transactions yet 💸</strong>
+        {% endfor %}
     </div>
+{% endblock %}
+
+{% block javascript %}
+    <script src="{% static 'js/transaction_group_detail.js' %}"></script>
 {% endblock %}

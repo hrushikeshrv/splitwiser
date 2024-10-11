@@ -30,10 +30,12 @@ class TransactionGroupListView(ListView):
         return self.request.user.transaction_groups.all()
 
 
-class TransactionGroupDetailView(UserPassesTestMixin, DetailView):
-    model = TransactionGroup
+# A detail view for a transaction group is actually a list view for
+# transactions in the transaction group
+class TransactionGroupDetailView(UserPassesTestMixin, ListView):
     template_name = "core/transaction_group_detail.html"
-    context_object_name = "transaction_group"
+    context_object_name = "transactions"
+    paginate_by = 20
 
     def test_func(self):
         if not self.request.user.is_authenticated:
@@ -42,10 +44,19 @@ class TransactionGroupDetailView(UserPassesTestMixin, DetailView):
             pk=int(self.kwargs["pk"])
         ).exists()
 
-    def get_object(self, queryset=None):
-        return TransactionGroup.objects.prefetch_related(
-            "users", "transactions", "transactions__shares"
-        ).get(pk=self.kwargs["pk"])
+    def get_queryset(self):
+        return (
+            TransactionGroup.objects.get(pk=self.kwargs["pk"])
+            .transactions.prefetch_related("shares", "group__users")
+            .all()
+        )
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["transaction_group"] = TransactionGroup.objects.get(
+            pk=self.kwargs["pk"]
+        )
+        return context
 
 
 class JoinTransactionGroupView(View):

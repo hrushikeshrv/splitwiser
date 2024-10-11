@@ -522,11 +522,13 @@ a.button-link:active {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.3), 5px 5px 10px rgba(0, 0, 0, 0.45);
     max-height: min(90svh, 800px);
     max-width: 90vw;
+    width: min(500px, 90vw);
     display: flex;
     flex-flow: column nowrap;
     overflow-y: auto;
     left: 50%;
     top: 50%;
+    border-radius: 10px;
     transform: translate(-50%, -50%);
 }
 
@@ -830,4 +832,19 @@ nav {
 
 .transaction-group-container:hover {
     background-color: var(--background-dark-2);
+}
+
+/*
+    transaction group detail styles
+*/
+.transaction-container {
+    border-bottom: 2px solid var(--muted-font);
+    flex-wrap: nowrap;
+    background-color: var(--background-color);
+    transition: background-color ease 0.2s;
+    cursor: pointer;
+}
+
+.transaction-container:hover {
+    background-color: var(--background-dark-1);
 }
