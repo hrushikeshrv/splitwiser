@@ -1,7 +1,7 @@
 {% extends 'layout.html' %}
 {% load static %}
 
-{% block title %}Split | hrus.in{% endblock %}
+{% block title %}{{ transaction_group.name }} | Split{% endblock %}
 
 {% block hidden %}
     <input type="hidden" name="transaction-group-share-url" id="transaction-group-share-url" value="{% url 'api:transaction_group_summary' transaction_group.pk %}">

@@ -1,10 +1,18 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'layout.html' %}
 
-</body>
-</html>
+{% block title %}Join a Group | Split{% endblock %}
+
+{% block body %}
+    <div class="flexbox-column ajc" style="flex-grow: 1;">
+        <form action="{% url 'core:transaction_group_join' %}" method="POST" class="flexbox-column pad-30 login-form" style="min-width: 300px;">
+            {% csrf_token %}
+            {% if error %}
+                <span class="error-message mbt-20" style="text-align: center;">{{ error }}</span>
+            {% endif %}
+            <label for="id_code">Group Code:</label>
+            <input type="text" name="code" id="id_code" required maxlength="7" autocomplete="off">
+
+            <button type="submit" class="cta-button mt-20">Join Group</button>
+        </form>
+    </div>
+{% endblock %}

@@ -3,5 +3,19 @@
 {% block title %}Split | hrus.in{% endblock %}
 
 {% block body %}
-
+    <div class="flexbox-column ajc center mbt-30" style="flex-grow: 1;">
+        <strong style="font-size: 3rem;">Split Expenses With Friends</strong>
+    </div>
+    <div class="flexbox-row ajc">
+        <span>
+            <span style="margin-right: 10px;">Already a member?</span>
+            <a href="{% url 'users:login' %}" class="a center mbt-10" style="text-align: center;">Log In</a>
+        </span>
+    </div>
+    <div class="flexbox-row ajc mt-10">
+        <span>
+            <span style="margin-right: 10px;">Need an account?</span>
+            <a href="{% url 'users:register' %}" class="a center mbt-10" style="text-align: center;">Sign Up</a>
+        </span>
+    </div>
 {% endblock %}

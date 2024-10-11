@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from django.contrib.auth.mixins import UserPassesTestMixin
+from django.contrib.auth.mixins import UserPassesTestMixin, LoginRequiredMixin
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, reverse
 from django.utils.timezone import now
@@ -94,9 +94,25 @@ class TransactionCreateView(UserPassesTestMixin, View):
         return HttpResponseRedirect(reverse('core:transaction_group_detail', kwargs={"pk": pk}))
 
 
-class JoinTransactionGroupView(View):
+class JoinTransactionGroupView(LoginRequiredMixin, View):
     def get(self, request):
         return render(request, "core/transaction_group_join.html")
+
+    def post(self, request):
+        code = request.POST.get('code')
+        try:
+            group = TransactionGroup.objects.get(code=code)
+            group.users.add(request.user)
+            group.save()
+            return HttpResponseRedirect(reverse('core:transaction_group_detail', kwargs={"pk": group.pk}))
+        except TransactionGroup.DoesNotExist:
+            return render(request, "core/transaction_group_join.html", {
+                'error': 'Invalid group code'
+            })
+        except Exception as e:
+            return render(request, "core/transaction_group_join.html", {
+                'error': 'An error occurred while joining the group'
+            })
 
 
 def test_view(request, *args, **kwargs):

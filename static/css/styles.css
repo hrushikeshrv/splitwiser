@@ -428,6 +428,11 @@ a.button-link:active {
     margin-bottom: 20px;
 }
 
+.mbt-30 {
+    margin-top: 30px;
+    margin-bottom: 30px;
+}
+
 .mt-10 {
     margin-top: 10px;
 }
