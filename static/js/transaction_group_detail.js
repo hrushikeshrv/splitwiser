@@ -42,7 +42,6 @@ fetch(groupPaymentShareURL)
                                 </tbody>
                             </table>
                         </div>
-                    </div>
                 `;
                 document.body.appendChild(popupContainer);
                 popupContainer.addEventListener('click', (e) => {

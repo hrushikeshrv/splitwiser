@@ -25,6 +25,7 @@ class Transaction(models.Model):
     group = models.ForeignKey(
         TransactionGroup, on_delete=models.CASCADE, related_name="transactions"
     )
+    is_internal_payment = models.BooleanField(default=False)
 
     # The total amount of the transaction. Each user that this transaction was
     # added for could have a different share, which is recorded in the associated

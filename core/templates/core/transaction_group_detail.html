@@ -9,11 +9,43 @@
 {% endblock %}
 
 {% block body %}
+    {% for transaction in page_obj %}
+        <div class="floating-popup-container hidden" id="transaction-popup-container-{{ transaction.pk }}">
+            <div class="floating-popup flexbox-column pad-20 hide-scrollbar">
+                <div class="flexbox-row jcsb aic" style="flex-wrap: nowrap;">
+                    <div class="flexbox-column">
+                        <strong style="font-size: 1.2rem;">{{ transaction.title }}</strong>
+                        <span>by {{ transaction.by.username }}</span>
+                    </div>
+                    <strong style="font-size: 1.5rem;">{{ transaction_group.currency }}{{ transaction.get_amount }}</strong>
+                </div>
+                <hr>
+                <div class="table-container">
+                    <table style="border-color: transparent;">
+                        <tbody>
+                            {% for share in transaction.shares.all %}
+                                <tr style="font-size: 0.95rem;">
+                                    <td>{{ share.user.username }}</td>
+                                    <td>paid</td>
+                                    <td><strong>{{ transaction_group.currency }}{{ share.get_amount_paid }}</strong></td>
+                                    <td>and owed</td>
+                                    <td><strong>{{ transaction_group.currency }}{{ share.get_amount_owed }}</strong></td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+
     <div id="add-transaction-popup-container" class="floating-popup-container hidden">
         <div class="floating-popup flexbox-column pad-20 hide-scrollbar">
             <strong style="font-size: 1.2rem;">Add a Transaction</strong>
             <form action="{% url 'core:transaction_create' transaction_group.pk %}" method="POST" id="add-transaction-form" class="flexbox-column">
                 {% csrf_token %}
+                <input type="hidden" name="internal-payment" value="false">
+
                 <label for="id_transaction_name">Transaction Name (optional):</label>
                 <input type="text" name="name" id="id_transaction_name" placeholder="Transaction Name" autocomplete="false">
 
@@ -31,12 +63,6 @@
                 </select>
 
                 <label for="id_transaction_for">For:</label>
-{#                {% for user in transaction_group.users.all %}#}
-{#                    <div class="flexbox-row aic transaction-for-option">#}
-{#                        <input type="checkbox" name="for" id="id_transaction_for_{{ user.username }}" checked>#}
-{#                        <label for="id_transaction_for_{{ user.username }}" style="margin-top: 0; margin-left: 4px;">{{ user.username }}</label>#}
-{#                    </div>#}
-{#                {% endfor %}#}
                 <select name="for" id="id_transaction_for" multiple>
                     {% for user in transaction_group.users.all %}
                         <option value="{{ user.username }}" selected>{{ user.username }}</option>
@@ -46,6 +72,42 @@
                 <button class="flexbox-row ajc cta-button mt-20" id="create-transaction-button">
                     <span class="material-symbols-outlined">payments</span>
                     <span>Add Transaction</span>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div id="add-internal-payment-popup-container" class="floating-popup-container hidden">
+        <div class="floating-popup flexbox-column pad-20 hide-scrollbar">
+            <form action="{% url 'core:transaction_create' transaction_group.pk %}" method="POST" id="add-internal-payment-form" class="flexbox-column">
+                {% csrf_token %}
+                <input type="hidden" name="internal-payment" value="true">
+
+                <label for="id_internal_payment_amount">Amount ({{ transaction_group.currency }}):</label>
+                <input type="number" name="amount" id="id_internal_payment_amount" required>
+
+                <label for="id_internal_payment_date">Date:</label>
+                <input type="datetime-local" name="date" id="id_internal_payment_date" required>
+
+                <label for="id_internal_payment_by">By:</label>
+                <select name="by" id="id_internal_payment_by" required>
+                    {% for user in transaction_group.users.all %}
+                        <option value="{{ user.username }}" {% if request.user.username == user.username %}selected{% endif %}>{{ user.username }}</option>
+                    {% endfor %}
+                </select>
+
+                <label for="id_internal_payment_for">To:</label>
+                <select name="for" id="id_internal_payment_for">
+                    {% for user in transaction_group.users.all %}
+                        {% if user.username != request.user.username %}
+                        <option value="{{ user.username }}">{{ user.username }}</option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+
+                <button class="flexbox-row ajc cta-button mt-20" id="create-internal-payment-button">
+                    <span class="material-symbols-outlined">payments</span>
+                    <span>Add Payment</span>
                 </button>
             </form>
         </div>
@@ -80,13 +142,12 @@
                 <span class="material-symbols-outlined">payments</span>
                 <span style="margin-right: 7px;">Transaction</span>
             </button>
-            <button id="add-payment-button" class="space-lr flexbox-row ajc secondary-button">
+            <button id="add-payment-button" class="space-lr flexbox-row ajc secondary-button popup-trigger-button" data-popup-container-id="add-internal-payment-popup-container">
                 <span class="material-symbols-outlined" style="font-size: 0.95rem;">currency_exchange</span>
                 <span>Internal Payment</span>
             </button>
         </div>
     </div>
-
 
     <div class="flexbox-column column-twothird center transactions-list pad-10 mt-20">
         <span class="flexbox-row aic jcfe mb-10">
@@ -106,7 +167,7 @@
         </span>
 
         {% for transaction in page_obj %}
-            <div class="transaction-container flexbox-row aic jcsb pad-10">
+            <div class="transaction-container flexbox-row aic jcsb pad-10 popup-trigger-button" data-popup-container-id="transaction-popup-container-{{ transaction.pk }}">
                 <div class="flexbox-column">
                     <strong>{{ transaction.title }}</strong>
                     {% with transaction.get_share_count as count %}
@@ -125,7 +186,9 @@
     <script src="{% static 'js/transaction_group_detail.js' %}"></script>
     <script>
         const transactionDateInput = document.querySelector('#id_transaction_date');
+        const internalPaymentDateInput = document.querySelector('#id_internal_payment_date');
         const now = new Date();
         transactionDateInput.value = now.toISOString().slice(0, 16);
+        internalPaymentDateInput.value = now.toISOString().slice(0, 16);
     </script>
 {% endblock %}
