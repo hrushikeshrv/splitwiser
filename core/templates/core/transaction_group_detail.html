@@ -20,6 +20,9 @@
                     <strong style="font-size: 1.5rem;">{{ transaction_group.currency }}{{ transaction.get_amount }}</strong>
                 </div>
                 <hr>
+                {% if transaction.is_internal_payment %}
+                <span style="font-family: var(--monospace-font);">{{ transaction.by.username }} paid {{ transaction_group.currency }}{{ transaction.get_amount }} to {{ transaction.get_internal_payment_for }}</span>
+                {% else %}
                 <div class="table-container">
                     <table style="border-color: transparent;">
                         <tbody>
@@ -35,6 +38,7 @@
                         </tbody>
                     </table>
                 </div>
+                {% endif %}
             </div>
         </div>
     {% endfor %}
@@ -99,9 +103,7 @@
                 <label for="id_internal_payment_for">To:</label>
                 <select name="for" id="id_internal_payment_for">
                     {% for user in transaction_group.users.all %}
-                        {% if user.username != request.user.username %}
                         <option value="{{ user.username }}">{{ user.username }}</option>
-                        {% endif %}
                     {% endfor %}
                 </select>
 
@@ -150,28 +152,32 @@
     </div>
 
     <div class="flexbox-column column-twothird center transactions-list pad-10 mt-20">
-        <span class="flexbox-row aic jcfe mb-10">
+        <div class="flexbox-row aic jcsb mb-10">
+            <div id="search-transactions-container" class="flexbox-row aic">
+                <input type="text" name="search-transactions" id="search-transactions" placeholder="Search for transactions" style="padding: 5px;">
+            </div>
+
             <span class="flexbox-row ajc" id="payment-record-pages" style="margin-right: 10px;">
                 {% if page_obj.has_previous %}
-                    <a href="{% url 'core:transaction_group_detail' transaction_group %}?page={{ page_obj.previous_page_number }}" class="pagination-page space-lr">
-                        Previous Page
+                    <a href="{% url 'core:transaction_group_detail' transaction_group.pk %}?page={{ page_obj.previous_page_number }}" class="pagination-page space-lr">
+                        <span class="material-symbols-outlined">chevron_left</span>
                     </a>
                 {% endif %}
-                <span class="space-lr">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+                <span class="space-lr">{{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
                 {% if page_obj.has_next %}
-                    <a href="{% url 'core:transaction_group_detail' transaction_group %}?page={{ page_obj.next_page_number }}" class="pagination-page space-lr">
-                        Next Page
+                    <a href="{% url 'core:transaction_group_detail' transaction_group.pk %}?page={{ page_obj.next_page_number }}" class="pagination-page space-lr">
+                        <span class="material-symbols-outlined">chevron_right</span>
                     </a>
                 {% endif %}
             </span>
-        </span>
+        </div>
 
         {% for transaction in page_obj %}
             <div class="transaction-container flexbox-row aic jcsb pad-10 popup-trigger-button" data-popup-container-id="transaction-popup-container-{{ transaction.pk }}">
                 <div class="flexbox-column">
                     <strong>{{ transaction.title }}</strong>
                     {% with transaction.get_share_count as count %}
-                    <span style="font-size: 0.9rem;">By {{ transaction.by.username }} for {{ count }} {{ count|pluralize:"person,people" }}</span>
+                    <span style="font-size: 0.9rem;">By {{ transaction.by.username }} {% if transaction.is_internal_payment %}to {{ transaction.get_internal_payment_for }}{% else %}for {{ count }} {{ count|pluralize:"person,people" }}{% endif %}</span>
                     {% endwith %}
                 </div>
                 <strong style="font-size: 1.5rem;">{{ transaction_group.currency }}{{ transaction.get_amount }}</strong>

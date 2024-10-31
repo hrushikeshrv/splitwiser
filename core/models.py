@@ -46,6 +46,18 @@ class Transaction(models.Model):
         """
         return str(self.amount / 100)
 
+    def get_internal_payment_for(self):
+        """
+        If this was an internal payment, return who this payment
+        was made to.
+        """
+        if not self.is_internal_payment:
+            return ''
+        share = self.shares.exclude(user=self.by).first()
+        if share:
+            return share.user.username
+        return ''
+
 
 class TransactionShare(models.Model):
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)

@@ -67,30 +67,62 @@ class TransactionCreateView(UserPassesTestMixin, View):
         return self.request.user.in_group(pk=int(self.kwargs["pk"]))
 
     def post(self, request, pk):
-        transaction_name = request.POST.get('name')
-        if not transaction_name:
-            transaction_name = 'Shared Transaction'
+        is_internal_payment = (request.POST.get('internal-payment', 'false') == 'true')
         transaction_amount = int(request.POST.get('amount', 0)) * 100
+        transaction_date = datetime.strptime(request.POST['date'], '%Y-%m-%dT%H:%M')
+        transaction_group = TransactionGroup.objects.get(pk=pk)
+        try:
+            transaction_by = User.objects.get(username=request.POST.get('by'))
+        except User.DoesNotExist:
+            return HttpResponseRedirect(reverse("core:transaction_group_detail", kwargs={"pk": pk}))
+
+        if is_internal_payment:
+            transaction_name = 'Internal Payment'
+        else:
+            transaction_name = request.POST.get('name')
+            if not transaction_name:
+                transaction_name = 'Shared Transaction'
 
         transaction = Transaction.objects.create(
             title=transaction_name,
-            date=datetime.strptime(request.POST['date'], '%Y-%m-%dT%H:%M'),
-            by=User.objects.get(username=request.POST.get('by')),
-            group=TransactionGroup.objects.get(pk=pk),
+            date=transaction_date,
+            by=transaction_by,
+            group=transaction_group,
             amount=transaction_amount,
+            is_internal_payment=is_internal_payment
         )
-        shared_usernames = request.POST.getlist('for', [])
-        amount_owed = transaction_amount / len(shared_usernames)
-        for username in shared_usernames:
-            amount_paid = 0
-            if username == request.POST.get('by', ''):
-                amount_paid = transaction_amount
+
+        if is_internal_payment:
+            try:
+                transaction_for = User.objects.get(username=request.POST.get('for'))
+            except User.DoesNotExist:
+                transaction.delete()
+                return HttpResponseRedirect(reverse("core:transaction_group_detail", kwargs={"pk": pk}))
             TransactionShare.objects.create(
-                user=User.objects.get(username=username),
+                user=transaction_by,
                 transaction=transaction,
-                amount_paid=amount_paid,
-                amount_owed=amount_owed,
+                amount_paid=transaction_amount,
+                amount_owed=0
             )
+            TransactionShare.objects.create(
+                user=transaction_for,
+                transaction=transaction,
+                amount_paid=0,
+                amount_owed=transaction_amount
+            )
+        else:
+            shared_usernames = request.POST.getlist('for', [])
+            amount_owed = transaction_amount / len(shared_usernames)
+            for username in shared_usernames:
+                amount_paid = 0
+                if username == request.POST.get('by', ''):
+                    amount_paid = transaction_amount
+                TransactionShare.objects.create(
+                    user=User.objects.get(username=username),
+                    transaction=transaction,
+                    amount_paid=amount_paid,
+                    amount_owed=amount_owed,
+                )
         return HttpResponseRedirect(reverse('core:transaction_group_detail', kwargs={"pk": pk}))
 
 
