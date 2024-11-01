@@ -54,3 +54,18 @@ fetch(groupPaymentShareURL)
             }
         })
     })
+
+const copyInviteCodeButton = document.querySelector('#copy-invite-code');
+const copyInviteLinkButton = document.querySelector('#copy-invite-link');
+
+copyInviteCodeButton.addEventListener('click', () => {
+    navigator.clipboard.writeText(copyInviteCodeButton.dataset.code).then(() => {
+        document.querySelector('#copy-success-message').classList.remove('hidden');
+    })
+});
+
+copyInviteLinkButton.addEventListener('click', () => {
+    navigator.clipboard.writeText(copyInviteLinkButton.dataset.link).then(() => {
+        document.querySelector('#copy-success-message').classList.remove('hidden');
+    })
+})

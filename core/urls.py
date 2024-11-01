@@ -7,6 +7,11 @@ app_name = "core"
 urlpatterns = [
     path("", views.IndexView.as_view(), name="index"),
     path(
+        "groups/create",
+        views.TransactionGroupCreateView.as_view(),
+        name="transaction_group_create",
+    ),
+    path(
         "groups/<int:pk>",
         views.TransactionGroupDetailView.as_view(),
         name="transaction_group_detail",

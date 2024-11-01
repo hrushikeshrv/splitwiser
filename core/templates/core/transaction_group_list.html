@@ -3,9 +3,40 @@
 {% block title %}Your Groups | Split{% endblock %}
 
 {% block body %}
+    <div class="floating-popup-container hidden" id="create-group-popup-container">
+        <div class="floating-popup flexbox-column pad-20 hide-scrollbar">
+            <strong style="font-size: 1.2rem;">Create a group</strong>
+            <form action="{% url 'core:transaction_group_create' %}" method="POST" class="flexbox-column">
+                {% csrf_token %}
+                <label for="id_name">Group Name:</label>
+                <input type="text" name="name" id="id_name" required>
+
+                <label for="id_currency">Group Currency:</label>
+                <select name="currency" id="id_currency" required>
+                    <option value="₹">₹</option>
+                    <option value="$">$</option>
+                    <option value="€">€</option>
+                    <option value="¥">¥</option>
+                    <option value="£">£</option>
+                    <option value="Fr">Fr</option>
+                    <option value="₩">₩</option>
+                    <option value="Kr">Kr</option>
+                    <option value="฿">฿</option>
+                    <option value="₪">₪</option>
+                    <option value="₺">₺</option>
+                    <option value="₱">₱</option>
+                    <option value="₽">₽</option>
+                </select>
+
+                <button class="cta-button flexbox-row ajc mt-20">
+                    Create Group
+                </button>
+            </form>
+        </div>
+    </div>
     <h1>Welcome, {{ request.user.username }}</h1>
     <div class="flexbox-row ajc mbt-20">
-        <button class="cta-button flexbox-row ajc space-lr" style="padding: 4px;">
+        <button class="cta-button flexbox-row ajc space-lr popup-trigger-button" data-popup-container-id="create-group-popup-container" style="padding: 4px;">
             <span class="material-symbols-outlined">group_add</span>
             <span style="margin-right: 5px;">Create Group</span>
         </button>
@@ -33,5 +64,4 @@
             </div>
         {% endfor %}
     </div>
-
 {% endblock %}

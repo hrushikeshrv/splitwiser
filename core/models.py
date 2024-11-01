@@ -52,11 +52,11 @@ class Transaction(models.Model):
         was made to.
         """
         if not self.is_internal_payment:
-            return ''
+            return ""
         share = self.shares.exclude(user=self.by).first()
         if share:
             return share.user.username
-        return ''
+        return ""
 
 
 class TransactionShare(models.Model):
