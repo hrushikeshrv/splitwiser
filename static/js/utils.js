@@ -9,3 +9,13 @@ function findGetParameter(parameterName) {
         });
     return result;
 }
+
+
+function getSelectValues(select) {
+    const result = [];
+    const options = select && select.options;
+    for (let i = 0; i < options.length; i++) {
+        if (options[i].selected) result.push(options[i].value);
+    }
+    return result;
+}

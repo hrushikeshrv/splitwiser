@@ -67,7 +67,7 @@
                 <input type="text" name="name" id="id_transaction_name" placeholder="Transaction Name" autocomplete="false">
 
                 <label for="id_transaction_amount">Amount ({{ transaction_group.currency }}):</label>
-                <input type="number" name="amount" id="id_transaction_amount" required>
+                <input type="number" name="amount" id="id_transaction_amount" required autofocus>
 
                 <label for="id_transaction_date">Date:</label>
                 <input type="datetime-local" name="date" id="id_transaction_date" required>
@@ -80,6 +80,7 @@
                 </select>
 
                 <label for="id_transaction_for">For:</label>
+                <small style="color: var(--muted-font);"><span id="n-for-selected">0 users</span> selected</small>
                 <select name="for" id="id_transaction_for" multiple>
                     {% for user in transaction_group.users.all %}
                         <option value="{{ user.username }}" selected>{{ user.username }}</option>

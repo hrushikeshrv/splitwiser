@@ -824,7 +824,7 @@ nav {
     position: absolute;
     height: 100%;
     width: 100vw;
-    left: -100%;
+    left: -110%;
     transition: left ease 0.2s;
     background-color: var(--background-dark-1);
 }

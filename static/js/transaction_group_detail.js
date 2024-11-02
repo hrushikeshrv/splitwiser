@@ -69,3 +69,14 @@ copyInviteLinkButton.addEventListener('click', () => {
         document.querySelector('#copy-success-message').classList.remove('hidden');
     })
 })
+
+const forUsersSelect = document.querySelector('#id_transaction_for');
+const selectedUsersDisplay = document.querySelector('#n-for-selected');
+forUsersSelect.addEventListener('change', updateSelectedUsersCount);
+
+function updateSelectedUsersCount() {
+    const n = getSelectValues(forUsersSelect).length;
+    selectedUsersDisplay.textContent = `${n} user${n === 1 ? '' : 's'}`;
+}
+
+document.addEventListener('DOMContentLoaded', updateSelectedUsersCount);

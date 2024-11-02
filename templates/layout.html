@@ -64,10 +64,10 @@
                 <span class="space-lr material-symbols-outlined">group</span>
                 <span class="space-lr">My Groups</span>
             </a>
-            <a href="" class="flexbox-row aic nav-link">
-                <span class="space-lr material-symbols-outlined">settings</span>
-                <span class="space-lr">Settings</span>
-            </a>
+{#            <a href="" class="flexbox-row aic nav-link">#}
+{#                <span class="space-lr material-symbols-outlined">settings</span>#}
+{#                <span class="space-lr">Settings</span>#}
+{#            </a>#}
         </div>
         {% endif %}
 
@@ -91,7 +91,7 @@
         {% endif %}
     </div>
     <nav class="flexbox-row aic jcsb pad-10">
-        <a href="{% url 'core:index' %}">
+        <a href="{% url 'core:index' %}" style="padding: 2px 7px;">
             <img src="{% static 'assets/favicon.png' %}" alt="Split" width="32">
         </a>
 
@@ -101,10 +101,10 @@
                 <span class="space-lr material-symbols-outlined">group</span>
                 <span class="space-lr">My Groups</span>
             </a>
-            <a href="" class="flexbox-row aic nav-link space-lr">
-                <span class="space-lr material-symbols-outlined">settings</span>
-                <span class="space-lr">Settings</span>
-            </a>
+{#            <a href="" class="flexbox-row aic nav-link space-lr">#}
+{#                <span class="space-lr material-symbols-outlined">settings</span>#}
+{#                <span class="space-lr">Settings</span>#}
+{#            </a>#}
             {% endif %}
             {% if request.user.is_authenticated %}
             <form method="POST" action="{% url 'users:logout' %}" class="flexbox-row aic nav-link space-lr">
