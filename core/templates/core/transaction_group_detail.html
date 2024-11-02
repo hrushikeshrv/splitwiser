@@ -50,7 +50,7 @@
 
             <div class="flexbox-row ajc mt-20">
                 <button class="cta-button space-lr" id="copy-invite-code" style="padding: 2px 7px;" data-code="{{ transaction_group.code }}">Copy Code</button>
-                <button class="cta-button space-lr" id="copy-invite-link" style="padding: 2px 7px;" data-link="{{ request.get_host }}{% url 'core:transaction_group_join' %}?code={{ transaction_group.code|urlencode }}">Copy Invite Link</button>
+                <button class="cta-button space-lr" id="copy-invite-link" style="padding: 2px 7px;" data-link="{{ request.get_host }}{% url 'core:transaction_group_join' %}?code={{ transaction_group.code|urlencode }}&name={{ transaction_group.name|urlencode }}">Copy Invite Link</button>
             </div>
             <span class="mt-20 center hidden" id="copy-success-message" style="text-align: center;">Copied! 🎉</span>
         </div>

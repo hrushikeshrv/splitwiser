@@ -3,11 +3,11 @@ from datetime import datetime
 from django.contrib.auth.mixins import UserPassesTestMixin, LoginRequiredMixin
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, reverse
-from django.utils.timezone import now
 from django.views.generic import View, DetailView, ListView, CreateView
 
 from users.models import User
 from core.models import TransactionGroup, Transaction, TransactionShare
+from core.utils import get_group_code
 
 
 class IndexView(View):
@@ -29,8 +29,9 @@ class TransactionGroupCreateView(LoginRequiredMixin, View):
         name = request.POST.get("name", "Shared Group")
         currency = request.POST.get("currency", "$")
         group = TransactionGroup.objects.create(name=name, currency=currency)
+        group.code = get_group_code(group.pk)
         group.users.add(request.user)
-        # TODO: Generate a code for the group
+        group.save()
         return HttpResponseRedirect(
             reverse("core:transaction_group_detail", kwargs={"pk": group.pk})
         )
